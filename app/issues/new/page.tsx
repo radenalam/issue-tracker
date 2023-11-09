@@ -1,47 +1,48 @@
 "use client";
 
-import { TextFieldInput, TextFieldRoot, Button } from "@radix-ui/themes";
-import SimpleMDE from "react-simplemde-editor";
-import { useForm, Controller } from "react-hook-form";
+import {
+  TextFieldInput,
+  TextFieldRoot,
+  Button,
+  TextArea,
+  CalloutRoot,
+  CalloutText,
+} from "@radix-ui/themes";
+import { useForm } from "react-hook-form";
 import axios from "axios";
-import "easymde/dist/easymde.min.css";
 import { useRouter } from "next/navigation";
-
-interface IssueForm {
-  title: string;
-  description: string;
-}
+import { useState } from "react";
 
 const NewIssuePage = () => {
   const router = useRouter();
-  const { register, control, handleSubmit } = useForm<IssueForm>();
-  console.log(register);
+  const { register, handleSubmit } = useForm();
+  const [error, setError] = useState("");
+
+  const onSubmit = async (data: any) => {
+    try {
+      await axios.post("/api/issues", data);
+      router.push("/issues");
+    } catch (error) {
+      setError("Terjadi Error.");
+    }
+  };
 
   return (
-    <form
-      className="max-w-xl pl-5 space-y-2"
-      onSubmit={handleSubmit(async (data) => {
-        try {
-          axios.post("/api/issues", data);
-          router.push("/issues");
-        } catch (error) {
-          console.log(error);
-        }
-      })}
-    >
-      <TextFieldRoot>
-        <TextFieldInput placeholder="Title" {...register("title")} />
-      </TextFieldRoot>
-      <Controller
-        name="description"
-        control={control}
-        render={({ field }) => (
-          <SimpleMDE placeholder="Description" {...field} />
-        )}
-      />
+    <div className="pl-5 max-w-xl">
+      {error && (
+        <CalloutRoot className="mb-4" color="red">
+          <CalloutText>{error}</CalloutText>
+        </CalloutRoot>
+      )}
 
-      <Button>Submit New Issue</Button>
-    </form>
+      <form className="  space-y-2" onSubmit={handleSubmit(onSubmit)}>
+        <TextFieldRoot>
+          <TextFieldInput placeholder="Title" {...register("title")} />
+        </TextFieldRoot>
+        <TextArea placeholder="Description" {...register("description")} />
+        <Button type="submit">Submit New Issue</Button>
+      </form>
+    </div>
   );
 };
 
