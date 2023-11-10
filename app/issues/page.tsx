@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Button, Table } from "@radix-ui/themes";
+import { Button, Kbd, Table } from "@radix-ui/themes";
 import Link from "next/link";
 import axios from "axios";
 
@@ -55,7 +55,9 @@ const IssuesPage = () => {
               </Table.RowHeaderCell>
               <Table.Cell className="p-2">{issue.title}</Table.Cell>
               <Table.Cell className="p-2">{issue.description}</Table.Cell>
-              <Table.Cell className="p-2">{issue.status}</Table.Cell>
+              <Table.Cell className="p-2">
+                <Kbd>{issue.status}</Kbd>
+              </Table.Cell>
               <Table.Cell className="p-2">{issue.createdAt}</Table.Cell>
             </Table.Row>
           ))}
